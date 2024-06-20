@@ -1,12 +1,18 @@
 'use client'
 
-import { useAppContext } from "../_context/context";
+import React from 'react';
+import { useCountDispatch } from '../_context/context';
 
-export default function Home() {
-  const {value} = useAppContext()
+const Count: React.FC = () => {
+  const dispatch = useCountDispatch();
+
   return (
-    <main className="flex flex-col items-center justify-between p-24">
-      Number: {value}
-    </main>
+    <div className='flex justify-center gap-2'>
+      <button className='border border-blue-500 p-2 rounded-md' onClick={() => dispatch({ type: 'increment' })}>+</button>
+      <button className='border border-blue-500 p-2 rounded-md' onClick={() => dispatch({ type: 'decrement' })}>-</button>
+    </div>
   );
-}
+};
+
+export default Count;
+
