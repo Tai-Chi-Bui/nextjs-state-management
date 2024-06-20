@@ -1,41 +1,47 @@
 'use client'
-
-import React, { createContext, useReducer, Dispatch, useContext } from 'react';
+// context.tsx
+import React, { createContext, useReducer, ReactNode, Dispatch } from 'react';
 import { State, Action } from './types';
 import { reducer, initialState } from './reducer';
+import { fetchData } from './api';
 
+interface ProviderProps {
+  children: ReactNode;
+}
 
-// const AppContext = createContext<any>(undefined);
-const CountStateContext = createContext<State | undefined>(undefined);
-const CountDispatchContext = createContext<Dispatch<Action> | undefined>(undefined);
+const StateContext = createContext<State | undefined>(undefined);
+const DispatchContext = createContext<Dispatch<Action> | undefined>(undefined);
 
-export function AppWrapper({ children }: {
-  children: React.ReactNode
-}) {
+export const Provider = ({ children }: ProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <CountStateContext.Provider value={state}>
-      <CountDispatchContext.Provider value={dispatch}>
+    <StateContext.Provider value={state}>
+      <DispatchContext.Provider value={dispatch}>
         {children}
-      </CountDispatchContext.Provider>
-    </CountStateContext.Provider>
-  )
-}
+      </DispatchContext.Provider>
+    </StateContext.Provider>
+  );
+};
 
-
-export const useCountState = () => {
-  const context = React.useContext(CountStateContext);
+export const useStateContext = () => {
+  const context = React.useContext(StateContext);
   if (context === undefined) {
-    throw new Error('useCountState must be used within a CountProvider');
+    throw new Error('useStateContext must be used within a Provider');
   }
   return context;
 };
 
-export const useCountDispatch = () => {
-  const context = React.useContext(CountDispatchContext);
+export const useDispatchContext = () => {
+  const context = React.useContext(DispatchContext);
   if (context === undefined) {
-    throw new Error('useCountDispatch must be used within a CountProvider');
+    throw new Error('useDispatchContext must be used within a Provider');
   }
   return context;
+};
+
+// Custom hook to use fetchData
+export const useFetchData = () => {
+  const dispatch = useDispatchContext();
+  return () => fetchData(dispatch);
 };
